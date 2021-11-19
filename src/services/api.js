@@ -9,9 +9,8 @@ export async function getCategories() {
 }
 
 export async function getProductsFromCategoryAndQuery(categoryId, query) {
-  const categoriesAndQueryEndPoint = `${Url}/sites
-  /MLB/search?category=$${categoryId}q=$${query}`;
-  const fetchApi = await fetch(categoriesAndQueryEndPoint);
+  const searchEndPoint = `${Url}/sites/MLB/search?category=${categoryId}&q=${query}`;
+  const fetchApi = await fetch(searchEndPoint);
   const response = await fetchApi.json();
 
   return response;
