@@ -1,17 +1,24 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { getCategories, getProductsFromCategoryAndQuery } from '../services/api';
+import ListProducts from './ListProducts';
+import SearchButton from './SearchButton';
 
 class Home extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
 
     this.state = {
       categories: [],
-      products: [],
+      list: [],
+      category: '',
+      input: '',
+      submit: false,
     };
 
     this.fetchCategories = this.fetchCategories.bind(this);
+    this.handleCategoryChange = this.handleCategoryChange.bind(this);
+    this.handleClick = this.handleClick.bind(this);
     this.handleInputChange = this.handleInputChange.bind(this);
   }
 
@@ -19,12 +26,31 @@ class Home extends React.Component {
     this.fetchCategories();
   }
 
-  async handleInputChange({ target: { id } }) {
-    const response = await getProductsFromCategoryAndQuery(id, '');
+  async handleCategoryChange({ target: { id } }) {
+    const { input } = this.state;
+    const response = await getProductsFromCategoryAndQuery(id, input);
 
     this.setState({
-      products: response.results,
+      list: response.results,
+      category: id,
+      submit: true,
     });
+  }
+
+  handleClick = () => {
+    const { input, category } = this.state;
+    this.setState(async () => {
+      const getProductList = await getProductsFromCategoryAndQuery(category, input);
+      this.setState({
+        list: getProductList.results,
+        submit: true,
+      });
+    });
+  }
+
+  handleInputChange = ({ target }) => {
+    const { name, value } = target;
+    this.setState({ [name]: value });
   }
 
   async fetchCategories() {
@@ -32,7 +58,7 @@ class Home extends React.Component {
   }
 
   render() {
-    const { categories, products } = this.state;
+    const { categories, list, input, submit } = this.state;
 
     return (
       <div>
@@ -45,6 +71,13 @@ class Home extends React.Component {
           </Link>
         </button>
         <div>
+          <SearchButton
+            value={ input }
+            onChange={ this.handleInputChange }
+            onClick={ this.handleClick }
+          />
+        </div>
+        <div>
           {
             categories.map(({ id, name }) => (
               <label key={ id } htmlFor={ id } data-testid="category">
@@ -53,21 +86,15 @@ class Home extends React.Component {
                   name="category"
                   id={ id }
                   value={ name }
-                  onChange={ this.handleInputChange }
+                  onChange={ this.handleCategoryChange }
                 />
                 { name }
               </label>
             ))
           }
-        </div>
-        <div>
-          {products.map((product) => (
-            <div key={ product.id } data-testid="product">
-              <p>{ product.title }</p>
-              <img src={ product.thumbnail } alt={ product.title } />
-              <p>{ `R$ ${product.price}` }</p>
-            </div>
-          ))}
+          <div>
+            {submit && <ListProducts list={ list } />}
+          </div>
         </div>
       </div>
     );
