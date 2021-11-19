@@ -17,10 +17,24 @@ class Home extends React.Component {
     };
 
     this.fetchCategories = this.fetchCategories.bind(this);
+    this.handleCategoryChange = this.handleCategoryChange.bind(this);
+    this.handleClick = this.handleClick.bind(this);
+    this.handleInputChange = this.handleInputChange.bind(this);
   }
 
   componentDidMount() {
     this.fetchCategories();
+  }
+
+  async handleCategoryChange({ target: { id } }) {
+    const { input } = this.state;
+    const response = await getProductsFromCategoryAndQuery(id, input);
+
+    this.setState({
+      list: response.results,
+      category: id,
+      submit: true,
+    });
   }
 
   handleClick = () => {
@@ -34,7 +48,7 @@ class Home extends React.Component {
     });
   }
 
-  handleChange = ({ target }) => {
+  handleInputChange = ({ target }) => {
     const { name, value } = target;
     this.setState({ [name]: value });
   }
@@ -59,7 +73,7 @@ class Home extends React.Component {
         <div>
           <SearchButton
             value={ input }
-            onChange={ this.handleChange }
+            onChange={ this.handleInputChange }
             onClick={ this.handleClick }
           />
         </div>
@@ -67,7 +81,13 @@ class Home extends React.Component {
           {
             categories.map(({ id, name }) => (
               <label key={ id } htmlFor={ id } data-testid="category">
-                <input type="radio" name="category" id={ id } value={ name } />
+                <input
+                  type="radio"
+                  name="category"
+                  id={ id }
+                  value={ name }
+                  onChange={ this.handleCategoryChange }
+                />
                 { name }
               </label>
             ))

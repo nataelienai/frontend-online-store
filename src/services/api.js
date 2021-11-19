@@ -9,7 +9,7 @@ export async function getCategories() {
 }
 
 export async function getProductsFromCategoryAndQuery(categoryId, query) {
-  const categoriesAndQueryEndPoint = `${Url}/search?category=$${categoryId}q=$${query}`;
+  const categoriesAndQueryEndPoint = `${Url}/search?category=${categoryId}&q=${query}`;
   const fetchApi = await fetch(categoriesAndQueryEndPoint);
   const response = await fetchApi.json();
 
