@@ -1,12 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
 import { getDetail } from '../services/api';
 
 export default class ProductDetail extends React.Component {
   constructor() {
     super();
     this.state = {
-      atributo: [],
+      product: {},
     };
     this.showData = this.showDetail.bind(this);
   }
@@ -16,23 +17,33 @@ export default class ProductDetail extends React.Component {
   }
 
   async showDetail() {
-    const { attributes } = await getDetail('MLB2027933292');
-    this.setState({ atributo: attributes });
+    const { match: { params: { id } } } = this.props;
+    const product = await getDetail(id);
+
+    this.setState({ product });
   }
 
   render() {
-    const { atributo } = this.state;
+    const {
+      product: { title, price, thumbnail, attributes = [] },
+    } = this.state;
+
     return (
-      <div data-testid="product-detail-name">
-        <ul>
-          {
-            atributo.map((e) => (
-              <li key={ e.id } htmlFor={ e.id } data-testid="category">
-                { `${e.name}: ${e.value_name}`}
-              </li>
-            ))
-          }
-        </ul>
+      <div>
+        <h1 data-testid="product-detail-name">{ `${title} - R$ ${price}` }</h1>
+        <img src={ thumbnail } alt={ title } />
+        <div>
+          <h2>Especificações técnicas</h2>
+          <ul>
+            {
+              attributes.map((e) => (
+                <li key={ e.id } htmlFor={ e.id } data-testid="category">
+                  { `${e.name}: ${e.value_name}`}
+                </li>
+              ))
+            }
+          </ul>
+        </div>
         <button type="button">
           <Link to="/">Home</Link>
         </button>
@@ -45,3 +56,11 @@ export default class ProductDetail extends React.Component {
     );
   }
 }
+
+ProductDetail.propTypes = {
+  match: PropTypes.shape({
+    params: PropTypes.shape({
+      id: PropTypes.string,
+    }),
+  }).isRequired,
+};
