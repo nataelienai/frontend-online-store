@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { getCategories, getProductsFromCategoryAndQuery } from '../services/api';
 import ListProducts from './ListProducts';
@@ -62,6 +63,11 @@ class Home extends React.Component {
     this.setState({ [name]: value });
   }
 
+  addToCart = (product) => {
+    const { onAdd } = this.props;
+    onAdd(product);
+  }
+
   async fetchCategories() {
     this.setState({ categories: await getCategories() });
   }
@@ -102,12 +108,16 @@ class Home extends React.Component {
             ))
           }
           <div>
-            {submit && <ListProducts list={ list } />}
+            {submit && <ListProducts list={ list } onAdd={ this.addToCart } />}
           </div>
         </div>
       </div>
     );
   }
 }
+
+Home.propTypes = {
+  onAdd: PropTypes.func.isRequired,
+};
 
 export default Home;
