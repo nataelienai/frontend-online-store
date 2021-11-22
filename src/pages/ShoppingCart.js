@@ -6,6 +6,7 @@ export default class ShoppingCart extends React.Component {
     return (
       <div>
         <p data-testid="shopping-cart-empty-message">Seu carrinho está vazio</p>
+
         <button type="button">
           <Link to="/">Home</Link>
         </button>

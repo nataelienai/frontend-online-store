@@ -8,6 +8,8 @@ class Home extends React.Component {
   constructor(props) {
     super(props);
 
+    this.isComponentMounted = false;
+
     this.state = {
       categories: [],
       list: [],
@@ -23,18 +25,25 @@ class Home extends React.Component {
   }
 
   componentDidMount() {
+    this.isComponentMounted = true;
     this.fetchCategories();
+  }
+
+  componentWillUnmount() {
+    this.isComponentMounted = false;
   }
 
   async handleCategoryChange({ target: { id } }) {
     const { input } = this.state;
     const response = await getProductsFromCategoryAndQuery(id, input);
 
-    this.setState({
-      list: response.results,
-      category: id,
-      submit: true,
-    });
+    if (this.isComponentMounted) {
+      this.setState({
+        list: response.results,
+        category: id,
+        submit: true,
+      });
+    }
   }
 
   handleClick = () => {

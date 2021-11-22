@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import Home from './pages/Home';
+import ProductDetail from './pages/ProductDetail';
 import ShoppingCart from './pages/ShoppingCart';
 
 function App() {
@@ -8,6 +9,7 @@ function App() {
     <BrowserRouter>
       <Switch>
         <Route exact path="/" component={ Home } />
+        <Route exact path="/product-detail/:id" component={ ProductDetail } />
         <Route exact path="/shopping-cart" component={ ShoppingCart } />
       </Switch>
     </BrowserRouter>
