@@ -19,10 +19,10 @@ class Home extends React.Component {
       submit: false,
     };
 
-    this.fetchCategories = this.fetchCategories.bind(this);
-    this.handleCategoryChange = this.handleCategoryChange.bind(this);
     this.handleClick = this.handleClick.bind(this);
     this.handleInputChange = this.handleInputChange.bind(this);
+    this.handleCategoryChange = this.handleCategoryChange.bind(this);
+    this.fetchCategories = this.fetchCategories.bind(this);
   }
 
   componentDidMount() {
@@ -32,19 +32,6 @@ class Home extends React.Component {
 
   componentWillUnmount() {
     this.isComponentMounted = false;
-  }
-
-  async handleCategoryChange({ target: { id } }) {
-    const { input } = this.state;
-    const response = await getProductsFromCategoryAndQuery(id, input);
-
-    if (this.isComponentMounted) {
-      this.setState({
-        list: response.results,
-        category: id,
-        submit: true,
-      });
-    }
   }
 
   handleClick = () => {
@@ -63,9 +50,17 @@ class Home extends React.Component {
     this.setState({ [name]: value });
   }
 
-  addToCart = (product) => {
-    const { onAdd } = this.props;
-    onAdd(product);
+  async handleCategoryChange({ target: { id } }) {
+    const { input } = this.state;
+    const response = await getProductsFromCategoryAndQuery(id, input);
+
+    if (this.isComponentMounted) {
+      this.setState({
+        list: response.results,
+        category: id,
+        submit: true,
+      });
+    }
   }
 
   async fetchCategories() {
@@ -74,6 +69,7 @@ class Home extends React.Component {
 
   render() {
     const { categories, list, input, submit } = this.state;
+    const { onAdd } = this.props;
 
     return (
       <div>
@@ -108,7 +104,7 @@ class Home extends React.Component {
             ))
           }
           <div>
-            {submit && <ListProducts list={ list } onAdd={ this.addToCart } />}
+            {submit && <ListProducts list={ list } onAdd={ onAdd } />}
           </div>
         </div>
       </div>

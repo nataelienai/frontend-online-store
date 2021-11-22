@@ -24,7 +24,9 @@ export default class ProductDetail extends React.Component {
   }
 
   render() {
+    const { addToCart } = this.props;
     const {
+      product,
       product: { title, price, thumbnail, attributes = [] },
     } = this.state;
 
@@ -52,6 +54,13 @@ export default class ProductDetail extends React.Component {
             Carrinho de compras
           </Link>
         </button>
+        <button
+          type="button"
+          onClick={ () => addToCart(product) }
+          data-testid="product-detail-add-to-cart"
+        >
+          Adicionar ao carrinho
+        </button>
       </div>
     );
   }
@@ -62,5 +71,6 @@ ProductDetail.propTypes = {
     params: PropTypes.shape({
       id: PropTypes.string,
     }),
-  }).isRequired,
-};
+  }),
+  addToCart: PropTypes.func,
+}.isRequired;
