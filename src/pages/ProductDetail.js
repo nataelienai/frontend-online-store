@@ -5,11 +5,12 @@ import { getDetail } from '../services/api';
 import EvaluationForm from './EvaluationForm';
 
 export default class ProductDetail extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       product: {},
     };
+
     this.showData = this.showDetail.bind(this);
   }
 
@@ -26,10 +27,8 @@ export default class ProductDetail extends React.Component {
 
   render() {
     const { addToCart } = this.props;
-    const {
-      product,
-      product: { title, price, thumbnail, attributes = [] },
-    } = this.state;
+    const { product } = this.state;
+    const { title, price, thumbnail, attributes = [] } = product;
 
     return (
       <div>
