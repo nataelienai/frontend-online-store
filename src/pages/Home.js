@@ -34,6 +34,19 @@ class Home extends React.Component {
     this.isComponentMounted = false;
   }
 
+  async handleCategoryChange({ target: { id } }) {
+    const { input } = this.state;
+    const response = await getProductsFromCategoryAndQuery(id, input);
+
+    if (this.isComponentMounted) {
+      this.setState({
+        list: response.results,
+        category: id,
+        submit: true,
+      });
+    }
+  }
+
   handleClick = () => {
     const { input, category } = this.state;
     this.setState(async () => {
@@ -50,19 +63,6 @@ class Home extends React.Component {
     this.setState({ [name]: value });
   }
 
-  async handleCategoryChange({ target: { id } }) {
-    const { input } = this.state;
-    const response = await getProductsFromCategoryAndQuery(id, input);
-
-    if (this.isComponentMounted) {
-      this.setState({
-        list: response.results,
-        category: id,
-        submit: true,
-      });
-    }
-  }
-
   async fetchCategories() {
     this.setState({ categories: await getCategories() });
   }
@@ -70,7 +70,6 @@ class Home extends React.Component {
   render() {
     const { categories, list, input, submit } = this.state;
     const { onAdd } = this.props;
-
     return (
       <div>
         <p data-testid="home-initial-message">
