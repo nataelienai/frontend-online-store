@@ -7,23 +7,61 @@ import ShoppingCart from './pages/ShoppingCart';
 class App extends React.Component {
   constructor(props) {
     super(props);
-
     this.state = {
-      cart: [],
+      cart: {},
     };
+
     this.addToCart = this.addToCart.bind(this);
+    this.removeFromCart = this.removeFromCart.bind(this);
+    this.decreaseQuantityOf = this.decreaseQuantityOf.bind(this);
   }
 
   addToCart(item) {
-    const { cart } = this.state;
+    this.setState((state) => {
+      const { cart } = state;
+      const { id } = item;
+      const products = {
+        ...cart,
+        [id]: { product: item, quantity: 1 },
+      };
 
-    this.setState({
-      cart: [...cart, item],
+      if (cart[id]) {
+        products[id].quantity = cart[id].quantity + 1;
+      }
+      return { cart: products };
+    });
+  }
+
+  removeFromCart(item) {
+    this.setState((state) => {
+      const { cart } = state;
+      const { id } = item;
+
+      delete cart[id];
+      return { cart };
+    });
+  }
+
+  decreaseQuantityOf(item) {
+    this.setState((state) => {
+      const { cart } = state;
+      const { id } = item;
+
+      if (cart[id].quantity > 0) {
+        return {
+          cart: {
+            ...cart,
+            [id]: { product: item, quantity: cart[id].quantity - 1 },
+          },
+        };
+      }
+      return null;
     });
   }
 
   render() {
     const { cart } = this.state;
+
     return (
       <BrowserRouter>
         <Switch>
@@ -37,9 +75,13 @@ class App extends React.Component {
               <ProductDetail { ...props } addToCart={ this.addToCart } />
             ) }
           />
-          {/* <Route exact path="/shopping-cart" component={ ShoppingCart } /> */}
           <Route exact path="/shopping-cart">
-            <ShoppingCart cart={ cart } />
+            <ShoppingCart
+              cart={ cart }
+              addToCart={ this.addToCart }
+              removeFromCart={ this.removeFromCart }
+              decreaseQuantityOf={ this.decreaseQuantityOf }
+            />
           </Route>
         </Switch>
       </BrowserRouter>
